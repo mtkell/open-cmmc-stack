@@ -1,0 +1,23 @@
+---
+- name: Pull image for {{ service.name }}
+  containers.podman.podman_image:
+    name: "{{ service.image }}"
+
+- name: Create data directory for {{ service.name }}
+  file:
+    path: "{{ service.data_dir }}"
+    state: directory
+    owner: "{{ service.user | default('root') }}"
+    group: "{{ service.group | default('root') }}"
+    mode: "0755"
+
+- name: Run {{ service.name }} container
+  containers.podman.podman_container:
+    name: "{{ service.name }}"
+    image: "{{ service.image }}"
+    state: started
+    restart_policy: always
+    ports: "{{ service.ports | default(omit) }}"
+    env: "{{ service.env | default({}) }}"
+    volumes: "{{ service.volumes | default([]) }}"
+    user: "{{ service.user | default(omit) }}"

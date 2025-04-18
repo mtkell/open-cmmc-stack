@@ -1,0 +1,10 @@
+---
+- name: Apply baseline security and deploy OpenCMMC Stack
+  hosts: all
+  become: true
+  roles:
+    - role: secure_ubuntu
+    - role: identity
+    - role: podman_services
+    - role: file_storage
+    - role: monitoring

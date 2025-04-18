@@ -1,0 +1,11 @@
+[Unit]
+Description=Keycloak Server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/podman start -a keycloak
+ExecStop=/usr/bin/podman stop -t 10 keycloak
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

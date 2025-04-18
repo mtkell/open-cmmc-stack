@@ -1,0 +1,6 @@
+---
+- name: Install step-ca and create systemd service
+  ansible.builtin.copy:
+    src: systemd-step-ca.service.j2
+    dest: /etc/systemd/system/step-ca.service
+  notify: Restart step-ca

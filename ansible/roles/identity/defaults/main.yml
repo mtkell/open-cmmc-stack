@@ -1,0 +1,6 @@
+---
+keycloak_version: "24.0.2"
+keycloak_admin_user: "admin"
+keycloak_admin_password: "securepassword"
+keycloak_realm: "OpenCMMC"
+step_ca_provisioner: "admin@example.com"

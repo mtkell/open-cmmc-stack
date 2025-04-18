@@ -1,0 +1,8 @@
+---
+- name: Install Tailscale
+  shell: curl -fsSL https://tailscale.com/install.sh | sh
+  args:
+    creates: /usr/bin/tailscale
+
+- name: Bring up Tailscale interface
+  command: tailscale up --authkey {{ tailscale_authkey }}

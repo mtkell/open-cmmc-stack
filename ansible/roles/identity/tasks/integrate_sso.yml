@@ -1,0 +1,4 @@
+---
+- name: Setup OIDC clients for SSO integration
+  ansible.builtin.debug:
+    msg: "Configure OIDC clients for Mailcow, Gitea and SAML for Nextcloud"

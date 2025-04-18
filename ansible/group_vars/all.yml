@@ -1,0 +1,39 @@
+---
+# 🔐 Global Access & Identity Settings
+default_user: cmmcadmin
+default_shell: /bin/bash
+ssh_authorized_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+# 🌐 Network & Proxy Settings
+nextcloud_port: 8080
+mailcow_port: 443
+keycloak_port: 8081
+tailscale_auth_key: tskey-abc123
+stepca_port: 9000
+wazuh_port: 55000
+
+# 📦 Container Images
+nextcloud_aio_image: nextcloud/all-in-one:latest
+keycloak_image: quay.io/keycloak/keycloak:24.0.2
+
+# 🗂️ Data Directories
+nextcloud_data_dir: /srv/nextcloud
+backup_base_dir: /srv/backups
+logs_dir: /var/log/open-cmmc
+
+# ⚙️ System Users
+svc_keycloak: svc_keycloak
+svc_mailcow: svc_mailcow
+svc_wazuh: svc_wazuh
+svc_stepca: svc_stepca
+
+# 🔄 Backup/Restore
+restic_password: changeme-securely
+restic_repo: /srv/backups/restic-repo
+
+# 📛 DNS & Hostname
+domain_name: example.cmmc.local
+hostname: open-cmmc-gateway
+
+# 📜 Default Realm for Keycloak
+keycloak_realm: OpenCMMC

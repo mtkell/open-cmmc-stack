@@ -1,0 +1,2 @@
+do_token         = "your_digitalocean_token_here"
+ssh_fingerprint  = "your_local_ssh_key_fingerprint"

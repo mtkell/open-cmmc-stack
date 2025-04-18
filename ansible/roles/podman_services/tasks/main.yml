@@ -1,0 +1,12 @@
+---
+- name: Ensure Podman is installed
+  apt:
+    name: podman
+    state: present
+  become: true
+
+- name: Pull and run Podman services
+  include_tasks: run_service.yml
+  loop: "{{ podman_services }}"
+  loop_control:
+    loop_var: service

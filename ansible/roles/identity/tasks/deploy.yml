@@ -1,0 +1,33 @@
+---
+- name: Pull Keycloak image
+  containers.podman.podman_image:
+    name: quay.io/keycloak/keycloak:24.0.2
+
+- name: Create systemd service user
+  user:
+    name: svc_keycloak
+    shell: /usr/sbin/nologin
+    system: yes
+    create_home: no
+
+- name: Create Keycloak config directory
+  file:
+    path: /opt/services/keycloak
+    state: directory
+    owner: svc_keycloak
+    group: svc_keycloak
+    mode: '0755'
+
+- name: Deploy Keycloak container
+  containers.podman.podman_container:
+    name: keycloak
+    image: quay.io/keycloak/keycloak:24.0.2
+    state: started
+    restart_policy: always
+    user: svc_keycloak
+    env:
+      KEYCLOAK_ADMIN: "{{ keycloak_admin_user }}"
+      KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
+    ports:
+      - "8080:8080"
+    command: "start --optimized"

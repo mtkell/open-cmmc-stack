@@ -1,0 +1,26 @@
+---
+- name: Create Nextcloud data directory
+  file:
+    path: "{{ nextcloud_data_dir }}"
+    state: directory
+    owner: root
+    group: root
+    mode: "0755"
+
+- name: Pull Nextcloud AIO container image
+  containers.podman.podman_image:
+    name: "{{ nextcloud_aio_image }}"
+
+- name: Deploy Nextcloud AIO container
+  containers.podman.podman_container:
+    name: "{{ nextcloud_container_name }}"
+    image: "{{ nextcloud_aio_image }}"
+    state: started
+    restart_policy: always
+    ports:
+      - "{{ nextcloud_port }}:8080"
+    volumes:
+      - "{{ nextcloud_data_dir }}:/mnt/ncdata:z"
+      - "nextcloud_aio_mastercontainer:/mnt/docker-aio-config:z"
+    env:
+      NEXTCLOUD_DATADIR: "/mnt/ncdata"

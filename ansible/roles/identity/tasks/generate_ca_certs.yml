@@ -1,0 +1,4 @@
+---
+- name: Generate CA certs using step-ca CLI
+  ansible.builtin.debug:
+    msg: "Running step ca init with preconfigured values"

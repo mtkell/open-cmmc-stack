@@ -1,0 +1,5 @@
+---
+- name: Configure Keycloak realm and groups
+  ansible.builtin.command:
+    cmd: "/opt/keycloak/bin/kcadm.sh create realms -s realm={{ keycloak_realm }} -s enabled=true"
+  when: keycloak_realm is defined

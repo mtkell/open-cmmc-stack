@@ -1,0 +1,27 @@
+---
+- name: Disable root login over SSH
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PermitRootLogin'
+    line: 'PermitRootLogin no'
+  notify: Restart SSH
+
+- name: Disable password authentication
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^PasswordAuthentication'
+    line: 'PasswordAuthentication no'
+  notify: Restart SSH
+
+- name: Ensure non-root admin user exists
+  user:
+    name: cmmcadmin
+    shell: /bin/bash
+    groups: sudo
+    create_home: yes
+    state: present
+
+- name: Add authorized SSH key for cmmcadmin
+  authorized_key:
+    user: cmmcadmin
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

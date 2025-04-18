@@ -1,0 +1,34 @@
+# Normalize all text files to LF endings
+* text=auto eol=lf
+
+# Markdown, YAML, Terraform, and code files treated as text
+*.md     text
+*.markdown text
+*.yml    text
+*.yaml   text
+*.tf     text
+*.tfvars text
+*.sh     text
+*.py     text
+*.mmd    text
+
+# Treat images and binary files as binary (no diff)
+*.svg    binary
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.ico    binary
+*.pdf    binary
+*.zip    binary
+*.tar.gz binary
+*.gz     binary
+
+# GitHub language statistics override (if needed)
+docs/** linguist-documentation
+*.md     linguist-language=Markdown
+*.mmd    linguist-language=Mermaid
+
+# Avoid diffs on lock and compiled files
+*.lock   binary
+*.retry  binary

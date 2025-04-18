@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  author: OpenCMMC Team
+  description: Identity and Access Management (IAM) role with Keycloak and Step-CA.
+  company: Kell Engineering
+  license: MIT
+  min_ansible_version: "2.12"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 22.04
+dependencies: []

@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  role_name: monitoring
+  author: open-cmmc
+  description: Centralized security logging and SIEM services using Wazuh and auditd
+  license: MIT
+  min_ansible_version: "2.10"
+
+dependencies: []

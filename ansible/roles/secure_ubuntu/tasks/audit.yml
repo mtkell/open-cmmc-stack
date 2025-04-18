@@ -1,0 +1,12 @@
+---
+- name: Install audit and integrity tools
+  apt:
+    name:
+      - auditd
+      - aide
+    state: present
+
+- name: Initialize AIDE database
+  command: aideinit
+  args:
+    creates: /var/lib/aide/aide.db.gz

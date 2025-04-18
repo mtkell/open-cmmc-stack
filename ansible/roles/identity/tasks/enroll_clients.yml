@@ -1,0 +1,4 @@
+---
+- name: Enroll clients in Step-CA
+  ansible.builtin.debug:
+    msg: "Provision client certificates using Step-CA"

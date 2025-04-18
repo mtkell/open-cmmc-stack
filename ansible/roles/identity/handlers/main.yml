@@ -1,0 +1,12 @@
+---
+- name: Restart keycloak
+  ansible.builtin.systemd:
+    name: keycloak
+    state: restarted
+    enabled: true
+
+- name: Restart step-ca
+  ansible.builtin.systemd:
+    name: step-ca
+    state: restarted
+    enabled: true

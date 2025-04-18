@@ -1,0 +1,9 @@
+---
+galaxy_info:
+  role_name: file_storage
+  author: open-cmmc
+  description: Deploy secure file collaboration using Nextcloud AIO
+  license: MIT
+  min_ansible_version: "2.10"
+
+dependencies: []

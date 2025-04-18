@@ -1,0 +1,10 @@
+---
+- name: Ensure kcadm.sh is present
+  stat:
+    path: /opt/keycloak/bin/kcadm.sh
+  register: kcadm_path
+
+- name: Install unzip (required for kcadm)
+  apt:
+    name: unzip
+    state: present

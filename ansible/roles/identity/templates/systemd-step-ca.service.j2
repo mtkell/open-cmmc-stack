@@ -1,0 +1,10 @@
+[Unit]
+Description=Step CA
+After=network.target
+
+[Service]
+ExecStart=/usr/local/bin/step-ca /etc/step-ca/config/step-ca-config.json
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

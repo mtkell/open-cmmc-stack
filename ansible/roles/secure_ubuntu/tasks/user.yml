@@ -1,0 +1,13 @@
+---
+- name: Ensure non-root user exists
+  user:
+    name: cmmcadmin
+    shell: /bin/bash
+    groups: sudo
+    state: present
+    create_home: yes
+
+- name: Add authorized SSH key for cmmcadmin
+  authorized_key:
+    user: cmmcadmin
+    key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"

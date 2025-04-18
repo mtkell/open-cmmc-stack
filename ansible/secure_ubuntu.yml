@@ -1,0 +1,6 @@
+---
+- name: Harden Ubuntu for CMMC Stack
+  hosts: localhost
+  become: yes
+  roles:
+    - secure_ubuntu

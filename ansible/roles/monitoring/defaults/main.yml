@@ -1,0 +1,4 @@
+---
+wazuh_container_name: "wazuh-manager"
+wazuh_image: "wazuh/wazuh:latest"
+wazuh_config_path: "/opt/wazuh/config"

@@ -1,0 +1,15 @@
+---
+- name: Include SSH hardening tasks
+  import_tasks: ssh.yml
+
+- name: Include firewall configuration
+  import_tasks: firewall.yml
+
+- name: Include audit logging setup
+  import_tasks: audit.yml
+
+- name: Include banner setup
+  import_tasks: banners.yml
+
+- name: Include automatic update configuration
+  import_tasks: updates.yml

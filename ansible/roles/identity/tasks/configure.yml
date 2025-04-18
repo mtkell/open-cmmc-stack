@@ -1,0 +1,35 @@
+---
+- name: Ensure Keycloak CLI (kcadm.sh) is installed
+  stat:
+    path: /opt/keycloak/bin/kcadm.sh
+  register: kcadm_path
+
+- name: Install Keycloak CLI if missing
+  get_url:
+    url: https://downloads.jboss.org/keycloak/24.0.2/keycloak-24.0.2.zip
+    dest: /tmp/keycloak.zip
+  when: not kcadm_path.stat.exists
+
+- name: Unarchive Keycloak CLI
+  unarchive:
+    src: /tmp/keycloak.zip
+    dest: /opt/
+    remote_src: yes
+  when: not kcadm_path.stat.exists
+
+- name: Authenticate Keycloak admin CLI session
+  command: >
+    /opt/keycloak/bin/kcadm.sh config credentials --server http://localhost:8080/auth
+    --realm master --user {{ keycloak_admin_user }} --password {{ keycloak_admin_password }}
+  environment:
+    KCADM_CONFIG: /opt/keycloak/kcadm.config
+
+- name: Create OpenCMMC realm
+  command: /opt/keycloak/bin/kcadm.sh create realms -s realm=OpenCMMC -s enabled=true
+
+- name: Create groups
+  loop:
+    - Access_CUI
+    - Access_FCI
+    - Access_Proprietary
+  command: /opt/keycloak/bin/kcadm.sh create groups -r OpenCMMC -s name="{{ item }}"

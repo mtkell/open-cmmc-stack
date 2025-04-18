@@ -1,0 +1,5 @@
+---
+nextcloud_aio_image: "nextcloud/all-in-one:latest"
+nextcloud_container_name: "nextcloud-aio-mastercontainer"
+nextcloud_data_dir: "/opt/nextcloud/data"
+nextcloud_port: 8080

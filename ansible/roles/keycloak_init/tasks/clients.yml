@@ -1,0 +1,6 @@
+---
+- name: Register SAML client for Nextcloud
+  shell: '/opt/keycloak/bin/kcadm.sh create clients -r OpenCMMC -s clientId=nextcloud-aio -s protocol=saml -s enabled=true'
+
+- name: Register OIDC client for Mailcow
+  shell: '/opt/keycloak/bin/kcadm.sh create clients -r OpenCMMC -s clientId=mailcow -s protocol=openid-connect -s enabled=true'

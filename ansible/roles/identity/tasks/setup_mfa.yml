@@ -1,0 +1,4 @@
+---
+- name: Enable MFA for users
+  ansible.builtin.debug:
+    msg: "Enabling TOTP in Keycloak authentication flow"

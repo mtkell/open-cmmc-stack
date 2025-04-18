@@ -1,0 +1,25 @@
+---
+- name: Deploy system login banner
+  template:
+    src: banner.txt.j2
+    dest: /etc/banner.txt
+    mode: '0644'
+
+- name: Apply banner for SSH
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^Banner'
+    line: 'Banner /etc/banner.txt'
+  notify: Restart SSH
+
+- name: Apply banner for console (TTY)
+  copy:
+    src: /etc/banner.txt
+    dest: /etc/issue
+    mode: '0644'
+
+- name: Apply banner for pre-login
+  copy:
+    src: /etc/banner.txt
+    dest: /etc/issue.net
+    mode: '0644'

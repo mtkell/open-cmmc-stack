@@ -1,0 +1,21 @@
+---
+- name: Include tasks to install and configure Keycloak
+  include_tasks: install_keycloak.yml
+
+- name: Include tasks to configure realm and users
+  include_tasks: configure_realm.yml
+
+- name: Include tasks to setup SSO integration
+  include_tasks: integrate_sso.yml
+
+- name: Include tasks to configure MFA policies
+  include_tasks: setup_mfa.yml
+
+- name: Include tasks to provision Step-CA
+  include_tasks: provision_step_ca.yml
+
+- name: Include tasks to enroll clients in Step-CA
+  include_tasks: enroll_clients.yml
+
+- name: Include tasks to generate CA certificates
+  include_tasks: generate_ca_certs.yml

@@ -1,0 +1,6 @@
+---
+realm_clients:
+  - name: nextcloud
+    protocol: saml
+  - name: mailcow
+    protocol: oidc

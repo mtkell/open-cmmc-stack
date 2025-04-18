@@ -1,0 +1,13 @@
+---
+- name: Test secure_ubuntu role on localhost
+  hosts: localhost
+  become: yes
+  gather_facts: true
+
+  vars:
+    secure_user: testadmin
+    ssh_pubkey_path: "~/.ssh/id_rsa.pub"
+    ssh_port: 22
+
+  roles:
+    - role: secure_ubuntu

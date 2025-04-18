@@ -1,0 +1,12 @@
+---
+- name: Install Keycloak container
+  containers.podman.podman_container:
+    name: keycloak
+    image: quay.io/keycloak/keycloak:{{ keycloak_version }}
+    state: started
+    restart_policy: always
+    env:
+      KEYCLOAK_ADMIN: "{{ keycloak_admin_user }}"
+      KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
+    ports:
+      - "8080:8080"
