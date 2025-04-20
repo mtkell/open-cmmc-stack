@@ -1,9 +1,0 @@
----
-- name: Create Keycloak Groups
-  shell: '/opt/keycloak/bin/kcadm.sh create groups -r OpenCMMC -s name=Access_CUI'
-
-- name: Create FCI Group
-  shell: '/opt/keycloak/bin/kcadm.sh create groups -r OpenCMMC -s name=Access_FCI'
-
-- name: Create Proprietary Group
-  shell: '/opt/keycloak/bin/kcadm.sh create groups -r OpenCMMC -s name=Access_Proprietary'

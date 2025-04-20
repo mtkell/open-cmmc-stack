@@ -15,9 +15,11 @@ wazuh_port: 55000
 # 📦 Container Images
 nextcloud_aio_image: nextcloud/all-in-one:latest
 keycloak_image: quay.io/keycloak/keycloak:24.0.2
+mailcow_image: mailcow/mailcow-dockerized:latest
 
 # 🗂️ Data Directories
 nextcloud_data_dir: /srv/nextcloud
+mailcow_data_dir: /opt/mailcow
 backup_base_dir: /srv/backups
 logs_dir: /var/log/open-cmmc
 
@@ -37,3 +39,13 @@ hostname: open-cmmc-gateway
 
 # 📜 Default Realm for Keycloak
 keycloak_realm: OpenCMMC
+
+# 📧 Mailcow Settings
+mailcow_hostname: mail
+mailcow_domain: "{{ domain_name }}"
+mailcow_fqdn: "{{ mailcow_hostname }}.{{ mailcow_domain }}"
+mailcow_timezone: America/New_York
+mailcow_admin_user: admin
+mailcow_admin_password: change_me_securely
+mailcow_letsencrypt_email: it@example.com
+mailcow_use_letsencrypt: "n"

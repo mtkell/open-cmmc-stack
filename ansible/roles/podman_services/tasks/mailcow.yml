@@ -1,38 +1,39 @@
 ---
-- name: Deploy mailcow container with Podman
-  containers.podman.podman_container:
-    name: mailcow
-    image: "{{ mailcow_image }}"
-    state: started
-    restart_policy: always
-    volumes:
-      - "{{ mailcow_data_dir }}:/data:z"
-    env:
-      CONFIG_PATH: "/data/config"
+- name: Ensure mailcow service directory exists
+  file:
+    path: "{{ service.compose_dir }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ service.user | default('root') }}"
+    group: "{{ service.group | default('root') }}"
 
-- name: Ensure systemd service is enabled for mailcow
+- name: Deploy mailcow .env file from template
+  template:
+    src: mailcow/env.j2
+    dest: "{{ service.compose_dir }}/.env"
+    owner: "{{ service.user | default('root') }}"
+    group: "{{ service.group | default('root') }}"
+    mode: "0600"
+
+- name: Copy mailcow podman-compose.yml
   copy:
-    dest: "/etc/systemd/system/podman-mailcow.service"
-    content: |
-      [Unit]
-      Description=Podman container for mailcow
-      Wants=network.target
-      After=network.target
-
-      [Service]
-      ExecStart=/usr/bin/podman start -a mailcow
-      ExecStop=/usr/bin/podman stop -t 10 mailcow
-      Restart=always
-
-      [Install]
-      WantedBy=multi-user.target
-    owner: root
-    group: root
+    src: mailcow/podman-compose.yml
+    dest: "{{ service.compose_dir }}/podman-compose.yml"
+    owner: "{{ service.user | default('root') }}"
+    group: "{{ service.group | default('root') }}"
     mode: "0644"
 
-- name: Reload systemd and enable service for mailcow
+- name: Copy mailcow systemd unit file
+  template:
+    src: mailcow/mailcow.service.j2
+    dest: /etc/systemd/system/podman-mailcow.service
+    mode: "0644"
+
+- name: Reload systemd daemon
+  command: systemctl daemon-reexec
+
+- name: Enable and start mailcow container service
   systemd:
-    daemon_reload: yes
     name: podman-mailcow.service
-    enabled: yes
+    enabled: true
     state: started

@@ -1,5 +1,0 @@
----
-- name: Create Keycloak Realm
-  shell: '/opt/keycloak/bin/kcadm.sh create realms -s realm=OpenCMMC -s enabled=true'
-  args:
-    creates: /opt/keycloak/data/realms/OpenCMMC

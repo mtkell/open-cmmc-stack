@@ -1,0 +1,15 @@
+[Unit]
+Description=Mailcow Podman Compose Service
+Wants=network.target
+After=network.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+WorkingDirectory={{ service.compose_dir }}
+ExecStart=/usr/bin/podman-compose -f {{ service.compose_dir }}/podman-compose.yml up -d
+ExecStop=/usr/bin/podman-compose -f {{ service.compose_dir }}/podman-compose.yml down
+TimeoutStartSec=0
+
+[Install]
+WantedBy=multi-user.target

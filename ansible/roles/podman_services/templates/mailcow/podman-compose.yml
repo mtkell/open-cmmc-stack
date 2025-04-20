@@ -1,0 +1,28 @@
+version: "3.8"
+
+services:
+  mailcow:
+    image: mailcow/mailcow-dockerized:latest
+    container_name: mailcow
+    env_file:
+      - .env
+    restart: always
+    ports:
+      - "25:25"
+      - "80:80"
+      - "443:443"
+      - "587:587"
+      - "993:993"
+    volumes:
+      - mailcow_data:/var/lib/mailcow
+      - mailcow_conf:/etc/mailcow
+    networks:
+      - mailcow_net
+
+volumes:
+  mailcow_data:
+  mailcow_conf:
+
+networks:
+  mailcow_net:
+    driver: bridge

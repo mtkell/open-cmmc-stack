@@ -1,0 +1,52 @@
+version: '3.7'
+
+services:
+  redis:
+    image: redis:alpine
+    restart: always
+    volumes:
+      - redis-data:/data:Z
+
+  mysql:
+    image: mariadb:10.5
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=mailcowrootpass
+      - MYSQL_DATABASE=mailcow
+      - MYSQL_USER=mailcow
+      - MYSQL_PASSWORD=mailcowpass
+    volumes:
+      - mysql-data:/var/lib/mysql:Z
+
+  dovecot:
+    image: mailcow/dovecot:latest
+    restart: always
+    volumes:
+      - vmail-data:/var/vmail:Z
+      - rspamd-data:/var/lib/rspamd:Z
+    environment:
+      - MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
+
+  postfix:
+    image: mailcow/postfix:latest
+    restart: always
+    environment:
+      - MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
+
+  nginx:
+    image: mailcow/nginx:latest
+    restart: always
+    ports:
+      - "8081:80"
+      - "8443:443"
+    volumes:
+      - nginx-certs:/etc/ssl/mail:Z
+    environment:
+      - MAILCOW_HOSTNAME=${MAILCOW_HOSTNAME}
+
+volumes:
+  redis-data:
+  mysql-data:
+  vmail-data:
+  rspamd-data:
+  nginx-certs:

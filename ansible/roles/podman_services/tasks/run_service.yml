@@ -2,6 +2,11 @@
 - name: Pull image for {{ service.name }}
   containers.podman.podman_image:
     name: "{{ service.image }}"
+  register: pulled_image
+
+- name: Debug pulled image result for {{ service.name }}
+  debug:
+    msg: "Image {{ service.image }} pulled: {{ pulled_image }}"
 
 - name: Create data directory for {{ service.name }}
   file:
@@ -21,3 +26,8 @@
     env: "{{ service.env | default({}) }}"
     volumes: "{{ service.volumes | default([]) }}"
     user: "{{ service.user | default(omit) }}"
+  register: podman_run
+
+- name: Debug container run status for {{ service.name }}
+  debug:
+    var: podman_run
