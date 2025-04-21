@@ -1,0 +1,67 @@
+---
+- name: Assert required variables are set
+  assert:
+    that:
+      - default_user is defined
+      - ssh_authorized_key is defined
+      - domain_name is defined
+      - hostname is defined
+      - mailcow_admin_user is defined
+      - mailcow_admin_password is defined
+      - mailcow_fqdn is defined
+    fail_msg: "One or more required variables are missing. Check deployment_config.yml or group_vars/all.yml"
+    success_msg: "All required variables are present"
+
+- name: Validate SSH public key format
+  assert:
+    that:
+      - ssh_authorized_key is match("^(ssh-(rsa|ed25519)|ecdsa-sha2-nistp[0-9]+) [A-Za-z0-9+/=]+( .*)?$")
+    fail_msg: "SSH public key format is invalid"
+    success_msg: "SSH public key format appears valid"
+
+- name: Validate email format
+  assert:
+    that:
+      - mailcow_letsencrypt_email is match("^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+$")
+    fail_msg: "Mailcow Let's Encrypt email address is not valid"
+    success_msg: "Mailcow Let's Encrypt email format is valid"
+
+- name: Check if domain_name resolves
+  command: "getent hosts {{ domain_name }}"
+  register: domain_lookup
+  ignore_errors: yes
+
+- name: Assert domain_name resolves in DNS
+  assert:
+    that:
+      - domain_lookup.rc == 0
+    fail_msg: "Domain name {{ domain_name }} does not resolve. Verify DNS or /etc/hosts."
+    success_msg: "Domain name {{ domain_name }} resolves successfully"
+
+- name: Log preflight validation results
+  copy:
+    dest: "{{ evidence_path }}/99_preflight/validation_checks.md"
+    content: |
+      # ✅ Preflight Validation Checks
+
+      **Status:** PASSED  
+      Timestamp: {{ ansible_date_time.iso8601 }}
+
+      ## Variables
+      - default_user: `{{ default_user }}`
+      - domain_name: `{{ domain_name }}`
+      - hostname: `{{ hostname }}`
+      - mailcow_admin_user: `{{ mailcow_admin_user }}`
+      - mailcow_fqdn: `{{ mailcow_fqdn }}`
+      - mailcow_letsencrypt_email: `{{ mailcow_letsencrypt_email }}`
+
+      ## DNS Resolution
+      - Domain `{{ domain_name }}` resolved to: `{{ domain_lookup.stdout | default('N/A') }}`
+
+      ## SSH Key Format
+      - SSH key validated against standard format
+
+      ## Email Format
+      - Email passed regex validation
+
+    mode: '0644'

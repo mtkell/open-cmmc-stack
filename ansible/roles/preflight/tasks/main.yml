@@ -1,0 +1,3 @@
+---
+- name: Run preflight variable validation
+  include_tasks: validate_vars.yml

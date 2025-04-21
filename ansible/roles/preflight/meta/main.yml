@@ -1,0 +1,10 @@
+---
+galaxy_info:
+  author: OpenCMMC Team
+  description: Validates required deployment inputs before running any roles
+  license: MIT
+  min_ansible_version: "2.10"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 22.04
