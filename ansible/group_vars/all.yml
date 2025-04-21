@@ -3,6 +3,8 @@
 default_user: cmmcadmin
 default_shell: /bin/bash
 ssh_authorized_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+organization_name: Acme Defense Systems  # Used in banners and audit messages
+
 
 # 🌐 Network & Proxy Settings
 nextcloud_port: 8080

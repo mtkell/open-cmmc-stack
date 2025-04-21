@@ -1,0 +1,75 @@
+---
+# 🛠️ One-Click Deployment Configuration for OpenCMMC Stack
+
+# 👤 Global Administrator Details
+global_admin_username: cmmcadmin
+global_admin_email: admin@example.com
+admin_ssh_public_key: "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+
+# 🌐 Domain and Host Settings
+domain_name: example.cmmc.local
+hostname: open-cmmc-gateway
+timezone: America/New_York
+dns_resolver_ip: 1.1.1.1
+
+# 🖥️ Infrastructure Provider
+provider: digitalocean         # Options: digitalocean, aws, gcp, azure, proxmox, baremetal
+provisioner_api_token: changeme-provider-token
+region: nyc3
+vm_size: s-2vcpu-4gb
+
+# 🔐 Security Parameters
+banner_text: |
+  *** WARNING ***
+
+  This system is the property of {{ domain_name }}. It is for authorized use only.
+  
+  - All information is subject to monitoring and disclosure.
+  - Unauthorized use may result in prosecution or administrative action.
+  - Use implies acceptance of all company security and use policies.
+
+# 🔑 SSH Configuration
+ssh_port: 22
+disable_root_ssh: true
+enforce_key_authentication: true
+
+# 📬 Mailcow Configuration
+mailcow_hostname: mail
+mailcow_admin_user: admin
+mailcow_admin_password: change_me_securely
+mailcow_letsencrypt_email: it@example.com
+mailcow_use_letsencrypt: "n"
+
+# 🔐 Tailscale
+tailscale_auth_key: tskey-abc123
+
+# 📜 Keycloak Identity Settings
+keycloak_realm: OpenCMMC
+
+# 🛡️ Ports Used by Services
+nextcloud_port: 8080
+mailcow_port: 443
+keycloak_port: 8081
+stepca_port: 9000
+wazuh_port: 55000
+
+# 📦 Container Images
+nextcloud_aio_image: nextcloud/all-in-one:latest
+keycloak_image: quay.io/keycloak/keycloak:24.0.2
+mailcow_image: mailcow/mailcow-dockerized:latest
+
+# 📁 Directories
+nextcloud_data_dir: /srv/nextcloud
+mailcow_data_dir: /opt/mailcow
+backup_base_dir: /srv/backups
+logs_dir: /var/log/open-cmmc
+
+# 📂 Backup Configuration
+restic_password: changeme-securely
+restic_repo: /srv/backups/restic-repo
+
+# ⚙️ System Users
+svc_keycloak: svc_keycloak
+svc_mailcow: svc_mailcow
+svc_wazuh: svc_wazuh
+svc_stepca: svc_stepca

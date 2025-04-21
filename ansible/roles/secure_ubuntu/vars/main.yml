@@ -1,0 +1,16 @@
+---
+login_banner_text: |
+  *** WARNING ***
+
+  This computer system is the property of {{ organization_name | default("Your Organization") }}.
+  It is for authorized use only.
+
+  By accessing this system, you acknowledge and consent to the following:
+
+  - All information transmitted, received, or stored on this system is subject to monitoring, interception, and review by authorized personnel.
+  - Unauthorized use, access, or modification of this system or its data is strictly prohibited and may result in disciplinary action, civil penalties, or criminal prosecution.
+  - Use of this system indicates your understanding and acceptance of company policies regarding information security, acceptable use, and data protection.
+
+  This system is protected under CMMC Level 2 guidelines to safeguard Controlled Unclassified Information (CUI), Federal Contract Information (FCI), proprietary company data, financial records, and Personally Identifiable Information (PII).
+
+  If you do not have explicit authorization, log off immediately.

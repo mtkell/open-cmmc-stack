@@ -1,0 +1,21 @@
+---
+
+- name: Write DNS resolution log
+  copy:
+    content: "{{ dns_log }}"
+    dest: "{{ evidence_dir }}/08_preflight_checks/dns_check.log"
+
+- name: Write email validation log
+  copy:
+    content: "{{ email_log }}"
+    dest: "{{ evidence_dir }}/08_preflight_checks/email_check.log"
+
+- name: Write SSH key validation log
+  copy:
+    content: "{{ ssh_log }}"
+    dest: "{{ evidence_dir }}/08_preflight_checks/ssh_key_check.log"
+
+- name: Write validation summary
+  template:
+    src: summary.md.j2
+    dest: "{{ evidence_dir }}/08_preflight_checks/summary.md"
