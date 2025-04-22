@@ -1,0 +1,2 @@
+[open_cmmc_stack]
+localhost ansible_connection=local

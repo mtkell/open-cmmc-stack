@@ -1,38 +1,44 @@
 ---
-- name: Deploy step_ca container with Podman
-  containers.podman.podman_container:
-    name: step_ca
-    image: "{{ step_ca_image }}"
-    state: started
-    restart_policy: always
-    volumes:
-      - "{{ step_ca_data_dir }}:/data:z"
-    env:
-      CONFIG_PATH: "/data/config"
+- name: Ensure Step-CA data directory exists
+  file:
+    path: "{{ stepca_data_dir }}"
+    state: directory
+    owner: "{{ svc_stepca }}"
+    group: "{{ svc_stepca }}"
+    mode: "0750"
 
-- name: Ensure systemd service is enabled for step_ca
-  copy:
-    dest: "/etc/systemd/system/podman-step_ca.service"
-    content: |
-      [Unit]
-      Description=Podman container for step_ca
-      Wants=network.target
-      After=network.target
-
-      [Service]
-      ExecStart=/usr/bin/podman start -a step_ca
-      ExecStop=/usr/bin/podman stop -t 10 step_ca
-      Restart=always
-
-      [Install]
-      WantedBy=multi-user.target
-    owner: root
-    group: root
+- name: Template Step-CA podman-compose.yml
+  template:
+    src: step_ca/podman-compose.yml.j2
+    dest: "{{ stepca_data_dir }}/podman-compose.yml"
+    owner: "{{ svc_stepca }}"
+    group: "{{ svc_stepca }}"
     mode: "0644"
 
-- name: Reload systemd and enable service for step_ca
+- name: Template Step-CA systemd unit file
+  template:
+    src: step_ca/step-ca.service.j2
+    dest: "/etc/systemd/system/step-ca.service"
+    mode: "0644"
+
+- name: Template Step-CA environment file
+  template:
+    src: step_ca/.env.j2
+    dest: "{{ stepca_data_dir }}/.env"
+    owner: "{{ svc_stepca }}"
+    group: "{{ svc_stepca }}"
+    mode: "0600"
+
+- name: Reload systemd and enable Step-CA
   systemd:
-    daemon_reload: yes
-    name: podman-step_ca.service
-    enabled: yes
-    state: started
+    name: step-ca
+    enabled: true
+    daemon_reload: true
+    state: restarted
+
+- name: Log deployment for Step-CA
+  debug:
+    msg: "Step-CA deployment complete"
+  notify:
+    - Document Step-CA Deployment
+    - Archive Step-CA Logs

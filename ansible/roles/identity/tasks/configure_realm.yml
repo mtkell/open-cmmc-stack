@@ -1,5 +1,19 @@
+# tasks/configure_realm.yml
 ---
+- name: Wait for Keycloak to be ready
+  uri:
+    url: "http://localhost:{{ keycloak_port }}/realms/master"
+    method: GET
+    status_code: 200
+  register: keycloak_status
+  until: keycloak_status.status == 200
+  retries: 10
+  delay: 10
+
 - name: Configure Keycloak realm and groups
-  ansible.builtin.command:
-    cmd: "/opt/keycloak/bin/kcadm.sh create realms -s realm={{ keycloak_realm }} -s enabled=true"
-  when: keycloak_realm is defined
+  command: >
+    /opt/keycloak/bin/kcadm.sh create realms -s realm={{ keycloak_realm }}
+    -s enabled=true --server http://localhost:{{ keycloak_port }} --realm master
+    --user {{ keycloak_admin_user }} --password {{ keycloak_admin_password }}
+  args:
+    creates: "/opt/keycloak/realms/{{ keycloak_realm }}.configured"

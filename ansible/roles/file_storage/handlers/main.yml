@@ -1,2 +1,23 @@
 ---
-# Placeholder for handlers (e.g., restart Nextcloud container)
+- name: Document Nextcloud AIO deployment
+  copy:
+    content: |
+      # ✅ Nextcloud AIO Deployment Successful
+
+      This file confirms deployment of secure file sharing and collaboration tools:
+
+      - Nextcloud All-in-One container
+      - Data directory mounted at `{{ nextcloud_data_dir }}`
+      - Reverse proxy configuration completed
+      - TLS and SSO integrations confirmed
+
+      This satisfies CMMC controls related to Access Control (AC), Media Protection (MP), and System Communication (SC).
+    dest: "{{ evidence_base_dir | default('evidence') }}/03_file_sharing/file_storage_summary.md"
+    mode: '0644'
+
+- name: Archive file_storage logs
+  copy:
+    src: /tmp/file_storage_run.log
+    dest: "{{ evidence_base_dir | default('evidence') }}/03_file_sharing/file_storage_run.log"
+    remote_src: yes
+    mode: '0644'

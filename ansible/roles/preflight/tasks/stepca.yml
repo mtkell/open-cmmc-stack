@@ -1,0 +1,9 @@
+- name: Check if 'stepca_password' is defined
+  fail:
+    msg: "'stepca_password' is not defined in group_vars or deployment_config."
+  when: stepca_password is not defined
+
+- name: Check if 'svc_stepca' user is defined
+  fail:
+    msg: "'svc_stepca' system user is not defined."
+  when: svc_stepca is not defined

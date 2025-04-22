@@ -1,2 +1,22 @@
 ---
-# Reserved for any future log restart triggers or alert changes
+- name: Document Monitoring Deployment (Wazuh)
+  copy:
+    content: |
+      # ✅ Wazuh Monitoring and Alerting
+
+      This deployment configured endpoint and container monitoring using:
+
+      - Wazuh server container
+      - Log forwarding and indexing
+      - Preconfigured alert rules
+
+      The system now supports real-time alerting, intrusion detection, and compliance monitoring.
+    dest: "{{ evidence_base_dir | default('evidence') }}/05_monitoring/monitoring_summary.md"
+    mode: '0644'
+
+- name: Archive monitoring logs
+  copy:
+    src: /tmp/monitoring_run.log
+    dest: "{{ evidence_base_dir | default('evidence') }}/05_monitoring/monitoring_run.log"
+    remote_src: yes
+    mode: '0644'

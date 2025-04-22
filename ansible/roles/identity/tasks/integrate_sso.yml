@@ -1,4 +1,11 @@
+# tasks/integrate_sso.yml
 ---
-- name: Setup OIDC clients for SSO integration
-  ansible.builtin.debug:
-    msg: "Configure OIDC clients for Mailcow, Gitea and SAML for Nextcloud"
+- name: Register Nextcloud client in Keycloak
+  command: >
+    /opt/keycloak/bin/kcadm.sh create clients -r {{ keycloak_realm }}
+    -s clientId=nextcloud -s enabled=true
+    -s protocol=saml
+    --server http://localhost:{{ keycloak_port }}
+    --realm master
+    --user {{ keycloak_admin_user }} --password {{ keycloak_admin_password }}
+  when: sso_nextcloud is defined

@@ -1,0 +1,14 @@
+[Unit]
+Description=Step-CA Certificate Authority Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/podman-compose -f {{ stepca_data_dir }}/podman-compose.yml up
+ExecStop=/usr/bin/podman-compose -f {{ stepca_data_dir }}/podman-compose.yml down
+Restart=always
+User={{ svc_stepca }}
+WorkingDirectory={{ stepca_data_dir }}
+EnvironmentFile={{ stepca_data_dir }}/.env
+
+[Install]
+WantedBy=multi-user.target

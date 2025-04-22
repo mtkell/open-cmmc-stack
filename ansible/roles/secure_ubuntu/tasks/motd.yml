@@ -1,0 +1,9 @@
+---
+- name: Ensure MOTD file is present
+  copy:
+    content: "{{ motd_banner_text }}"
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: '0644'
+  when: motd_banner_text is defined

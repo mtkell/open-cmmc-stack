@@ -1,50 +1,99 @@
+#!/usr/bin/env python3
+"""
+generate_group_vars.py – Converts deployment_config.yml into Ansible group_vars/all.yml
+Author: OpenCMMC Stack Automation
+"""
+
 import yaml
+from pathlib import Path
+import sys
 
-# Load deployment_config.yml
-with open('deployment_config.yml', 'r') as f:
-    deployment_config = yaml.safe_load(f)
+CONFIG_FILE = "deployment_config.yml"
+OUTPUT_FILE = "group_vars/all.yml"
 
-# Flattened structure for group_vars/all.yml
-group_vars = {
-    'default_user': deployment_config['global_admin_username'],
-    'default_shell': '/bin/bash',
-    'ssh_authorized_key': deployment_config['admin_ssh_public_key'],
-    'global_admin_email': deployment_config['global_admin_email'],
-    'domain_name': deployment_config['domain_name'],
-    'hostname': deployment_config['hostname'],
-    'timezone': deployment_config['timezone'],
-    'dns_resolver_ip': deployment_config['dns_resolver_ip'],
-    'ssh_port': deployment_config['ssh_port'],
-    'disable_root_ssh': deployment_config['disable_root_ssh'],
-    'enforce_key_authentication': deployment_config['enforce_key_authentication'],
-    'nextcloud_port': deployment_config['nextcloud_port'],
-    'mailcow_port': deployment_config['mailcow_port'],
-    'keycloak_port': deployment_config['keycloak_port'],
-    'stepca_port': deployment_config['stepca_port'],
-    'wazuh_port': deployment_config['wazuh_port'],
-    'tailscale_auth_key': deployment_config['tailscale_auth_key'],
-    'mailcow_hostname': deployment_config['mailcow_hostname'],
-    'mailcow_admin_user': deployment_config['mailcow_admin_user'],
-    'mailcow_admin_password': deployment_config['mailcow_admin_password'],
-    'mailcow_letsencrypt_email': deployment_config['mailcow_letsencrypt_email'],
-    'mailcow_use_letsencrypt': deployment_config['mailcow_use_letsencrypt'],
-    'keycloak_realm': deployment_config['keycloak_realm'],
-    'nextcloud_aio_image': deployment_config['nextcloud_aio_image'],
-    'keycloak_image': deployment_config['keycloak_image'],
-    'mailcow_image': deployment_config['mailcow_image'],
-    'nextcloud_data_dir': deployment_config['nextcloud_data_dir'],
-    'mailcow_data_dir': deployment_config['mailcow_data_dir'],
-    'backup_base_dir': deployment_config['backup_base_dir'],
-    'logs_dir': deployment_config['logs_dir'],
-    'restic_password': deployment_config['restic_password'],
-    'restic_repo': deployment_config['restic_repo'],
-    'svc_keycloak': deployment_config['svc_keycloak'],
-    'svc_mailcow': deployment_config['svc_mailcow'],
-    'svc_wazuh': deployment_config['svc_wazuh'],
-    'svc_stepca': deployment_config['svc_stepca'],
-    'banner_text': deployment_config['banner_text']
-}
+REQUIRED_FIELDS = [
+    "global_admin_username", "admin_ssh_public_key", "domain_name",
+    "hostname", "nextcloud_port", "mailcow_port", "keycloak_port",
+    "keycloak_image", "nextcloud_aio_image", "mailcow_image"
+]
 
-# Save to group_vars/all.yml
-with open('group_vars/all.yml', 'w') as f:
-    yaml.dump(group_vars, f, sort_keys=False, default_flow_style=False)
+def load_config():
+    if not Path(CONFIG_FILE).exists():
+        sys.exit(f"[!] {CONFIG_FILE} not found.")
+    with open(CONFIG_FILE, "r") as f:
+        return yaml.safe_load(f)
+
+def validate_config(cfg):
+    missing = [key for key in REQUIRED_FIELDS if key not in cfg]
+    if missing:
+        sys.exit(f"[!] Missing required keys in {CONFIG_FILE}: {', '.join(missing)}")
+
+def build_output(cfg):
+    return {
+        # Global User
+        "default_user": cfg["global_admin_username"],
+        "default_shell": "/bin/bash",
+        "ssh_authorized_key": cfg["admin_ssh_public_key"],
+
+        # System Info
+        "domain_name": cfg["domain_name"],
+        "hostname": cfg["hostname"],
+        "timezone": cfg.get("timezone", "UTC"),
+        "dns_resolver_ip": cfg.get("dns_resolver_ip", "1.1.1.1"),
+
+        # Network Ports
+        "nextcloud_port": cfg["nextcloud_port"],
+        "mailcow_port": cfg["mailcow_port"],
+        "keycloak_port": cfg["keycloak_port"],
+        "stepca_port": cfg.get("stepca_port", 9000),
+        "wazuh_port": cfg.get("wazuh_port", 55000),
+
+        # Container Images
+        "nextcloud_aio_image": cfg["nextcloud_aio_image"],
+        "keycloak_image": cfg["keycloak_image"],
+        "mailcow_image": cfg["mailcow_image"],
+
+        # Paths
+        "nextcloud_data_dir": cfg.get("nextcloud_data_dir", "/srv/nextcloud"),
+        "mailcow_data_dir": cfg.get("mailcow_data_dir", "/opt/mailcow"),
+        "backup_base_dir": cfg.get("backup_base_dir", "/srv/backups"),
+        "logs_dir": cfg.get("logs_dir", "/var/log/open-cmmc"),
+
+        # System Accounts
+        "svc_keycloak": cfg.get("svc_keycloak", "svc_keycloak"),
+        "svc_mailcow": cfg.get("svc_mailcow", "svc_mailcow"),
+        "svc_wazuh": cfg.get("svc_wazuh", "svc_wazuh"),
+        "svc_stepca": cfg.get("svc_stepca", "svc_stepca"),
+
+        # Backup
+        "restic_password": cfg.get("restic_password", "changeme-securely"),
+        "restic_repo": cfg.get("restic_repo", "/srv/backups/restic-repo"),
+
+        # Mailcow
+        "mailcow_hostname": cfg.get("mailcow_hostname", "mail"),
+        "mailcow_fqdn": f"{cfg.get('mailcow_hostname', 'mail')}.{cfg['domain_name']}",
+        "mailcow_admin_user": cfg.get("mailcow_admin_user", "admin"),
+        "mailcow_admin_password": cfg.get("mailcow_admin_password", "changeme"),
+        "mailcow_letsencrypt_email": cfg.get("mailcow_letsencrypt_email", "admin@localhost"),
+        "mailcow_use_letsencrypt": cfg.get("mailcow_use_letsencrypt", "n"),
+
+        # SSO & VPN
+        "tailscale_auth_key": cfg.get("tailscale_auth_key", ""),
+        "keycloak_realm": cfg.get("keycloak_realm", "OpenCMMC"),
+        "keycloak_admin_user": cfg.get("keycloak_admin_user", "admin"),
+        "keycloak_admin_password": cfg.get("keycloak_admin_password", "changeme"),
+    }
+
+def main():
+    config = load_config()
+    validate_config(config)
+    output = build_output(config)
+
+    Path("group_vars").mkdir(parents=True, exist_ok=True)
+    with open(OUTPUT_FILE, "w") as f:
+        yaml.dump(output, f, sort_keys=False, default_flow_style=False)
+
+    print(f"[✓] {OUTPUT_FILE} generated successfully from {CONFIG_FILE}")
+
+if __name__ == "__main__":
+    main()

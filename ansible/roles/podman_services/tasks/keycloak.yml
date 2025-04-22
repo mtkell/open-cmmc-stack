@@ -1,0 +1,41 @@
+---
+- name: Ensure Keycloak data directory exists
+  file:
+    path: "{{ keycloak_data_dir }}"
+    state: directory
+    owner: "{{ svc_keycloak }}"
+    group: "{{ svc_keycloak }}"
+    mode: "0755"
+
+- name: Pull Keycloak image
+  containers.podman.podman_image:
+    name: "{{ keycloak_image }}"
+
+- name: Create Keycloak container
+  containers.podman.podman_container:
+    name: keycloak
+    image: "{{ keycloak_image }}"
+    state: started
+    restart_policy: always
+    user: "{{ svc_keycloak }}"
+    ports:
+      - "{{ keycloak_port }}:8080"
+    env:
+      KEYCLOAK_ADMIN: "{{ keycloak_admin_user }}"
+      KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
+    volumes:
+      - "{{ keycloak_data_dir }}:/opt/keycloak/data:z"
+    command:
+      - "start"
+      - "--optimized"
+
+- name: Copy systemd unit template for Keycloak
+  template:
+    src: keycloak.service.j2
+    dest: "/etc/systemd/system/keycloak.service"
+    owner: root
+    group: root
+    mode: "0644"
+  notify:
+    - Reload systemd
+    - Enable and start Keycloak

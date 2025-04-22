@@ -1,4 +1,10 @@
+# tasks/setup_mfa.yml
 ---
-- name: Enable MFA for users
-  ansible.builtin.debug:
-    msg: "Enabling TOTP in Keycloak authentication flow"
+- name: Enable MFA flow in Keycloak
+  command: >
+    /opt/keycloak/bin/kcadm.sh update authentication/flows/browser
+    -r {{ keycloak_realm }}
+    -s 'requireMFA=true'
+    --server http://localhost:{{ keycloak_port }}
+    --realm master
+    --user {{ keycloak_admin_user }} --password {{ keycloak_admin_password }}

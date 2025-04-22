@@ -1,6 +1,57 @@
 ---
-keycloak_version: "24.0.2"
-keycloak_admin_user: "admin"
-keycloak_admin_password: "securepassword"
-keycloak_realm: "OpenCMMC"
-step_ca_provisioner: "admin@example.com"
+# defaults/main.yml for identity role
+
+# 🔐 Keycloak Admin Credentials (can be overridden by deployment_config.yml)
+keycloak_admin_user: admin
+keycloak_admin_password: changeme
+
+# 📜 Keycloak Realm Configuration
+keycloak_realm: OpenCMMC
+keycloak_realm_display_name: "OpenCMMC Identity Realm"
+
+# 👥 Default Groups to Provision
+keycloak_default_groups:
+  - Access_CUI
+  - Access_FCI
+  - Access_Proprietary
+
+# 🧪 Default Clients to Register (set empty to skip automatic client registration)
+keycloak_clients:
+  - name: nextcloud
+    protocol: saml
+    root_url: "https://nextcloud.{{ domain_name }}"
+    attributes:
+      email: "user.email"
+      displayname: "user.displayname"
+      uid: "user.userprincipalname"
+  - name: mailcow
+    protocol: openid-connect
+    root_url: "https://mail.{{ domain_name }}"
+    public_client: true
+
+# 🧬 Optional Federation: Entra ID or LDAP
+keycloak_federation_enabled: false
+keycloak_federation_provider: "entra"       # Options: entra, ldap
+keycloak_federation_settings:
+  entra:
+    entity_id: "https://sts.windows.net/{{ entra_tenant_id }}/"
+    sso_url: "https://login.microsoftonline.com/{{ entra_tenant_id }}/saml2"
+    certificate: "{{ entra_certificate_path }}"
+  ldap:
+    url: "ldaps://ldap.example.com"
+    bind_dn: "cn=admin,dc=example,dc=com"
+    bind_credential: "changeme"
+    users_dn: "ou=Users,dc=example,dc=com"
+    groups_dn: "ou=Groups,dc=example,dc=com"
+
+# 🔧 Step-CA Configuration
+stepca_dns_names: "{{ domain_name }}"
+stepca_admin_email: "{{ global_admin_email }}"
+stepca_password: changeme-securely
+
+# 🧑‍🔧 System User
+svc_keycloak: svc_keycloak
+svc_stepca: svc_stepca
+
+stepca_enable_generate_root: true
+stepca_root_cn: OpenCMMC Root CA

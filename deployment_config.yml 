@@ -19,6 +19,8 @@ region: nyc3
 vm_size: s-2vcpu-4gb
 
 # 🔐 Security Parameters
+motd_banner_text: "{{ lookup('template', 'roles/secure_ubuntu/templates/motd.txt.j2') }}"
+
 banner_text: |
   *** WARNING ***
 
@@ -45,6 +47,8 @@ tailscale_auth_key: tskey-abc123
 
 # 📜 Keycloak Identity Settings
 keycloak_realm: OpenCMMC
+keycloak_admin_user: admin
+keycloak_admin_password: change_me_securely
 
 # 🛡️ Ports Used by Services
 nextcloud_port: 8080
@@ -73,3 +77,6 @@ svc_keycloak: svc_keycloak
 svc_mailcow: svc_mailcow
 svc_wazuh: svc_wazuh
 svc_stepca: svc_stepca
+
+# 🔐 Step-CA Settings
+stepca_password: changeme-securely

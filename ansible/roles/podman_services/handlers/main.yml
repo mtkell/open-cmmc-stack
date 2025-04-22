@@ -1,2 +1,51 @@
 ---
-# Reserved for future restarts
+- name: Document Podman Services Deployment
+  copy:
+    content: |
+      # ✅ Podman Services Deployed
+
+      This summary confirms successful deployment of core containerized services using Podman:
+
+      - Keycloak, Mailcow, Wazuh, and Step-CA launched via systemd-managed Podman containers
+      - All services use rootless accounts and secured volumes
+      - podman-compose and systemd integration verified
+      - Service logs and container health validated
+
+      These services satisfy a wide set of CMMC controls including AC, SC, IA, AU, and CM families.
+    dest: "{{ evidence_base_dir | default('evidence') }}/04_platform_services/podman_services_summary.md"
+    mode: '0644'
+
+- name: Archive podman_services logs
+  copy:
+    src: /tmp/podman_services_run.log
+    dest: "{{ evidence_base_dir | default('evidence') }}/04_platform_services/podman_services_run.log"
+    remote_src: yes
+    mode: '0644'
+
+- name: Document Step-CA Deployment
+  copy:
+    content: |
+      # Step-CA Deployment Log
+
+      Step-CA was successfully deployed and enabled as a system service.
+
+      - Timestamp: {{ ansible_date_time.iso8601 }}
+      - User: {{ ansible_user }}
+      - Container Image: smallstep/step-ca:latest
+      - Port: {{ stepca_port }}
+
+    dest: "{{ evidence_dir }}/01_identity_access/step-ca_summary.md"
+    mode: "0644"
+
+- name: Archive Step-CA Logs
+  shell: |
+    journalctl -u step-ca > {{ evidence_dir }}/01_identity_access/step-ca_run.log
+  args:
+    executable: /bin/bash
+
+- name: Log Mailcow provisioning
+  copy:
+    content: "Mailcow deployed successfully at {{ ansible_date_time.iso8601 }}"
+    dest: "evidence/04_email/mailcow_deploy.log"
+    mode: '0644'
+

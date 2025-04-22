@@ -1,0 +1,14 @@
+version: "3.8"
+services:
+  stepca:
+    image: smallstep/step-ca:latest
+    container_name: step-ca
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - "{{ stepca_port }}:9000"
+    volumes:
+      - "{{ stepca_data_dir }}/certs:/home/step/certs"
+      - "{{ stepca_data_dir }}/config:/home/step/config"
+    user: "{{ svc_stepca }}"

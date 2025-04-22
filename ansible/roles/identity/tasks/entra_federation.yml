@@ -1,0 +1,15 @@
+---
+- name: Configure Entra ID SAML Identity Provider
+  when: enable_entra_federation
+  block:
+    - name: Create Entra ID SAML Identity Provider
+      ansible.builtin.command: >
+        {{ kcadm_bin }} create identity-provider/instances -r {{ keycloak_realm }}
+        -s alias=entra-id
+        -s providerId=saml
+        -s enabled=true
+        -s "config.samlEntityId={{ entra_saml_entity_id }}"
+        -s "config.singleSignOnServiceUrl={{ entra_sso_url }}"
+        -s "config.x509cert={{ entra_x509_cert }}"
+      environment:
+        PATH: "/opt/keycloak/bin:{{ ansible_env.PATH }}"

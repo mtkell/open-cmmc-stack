@@ -1,4 +1,14 @@
 ---
-- name: Generate CA certs using step-ca CLI
-  ansible.builtin.debug:
-    msg: "Running step ca init with preconfigured values"
+- name: Generate root certificate using step CLI
+  command: >
+    step certificate create
+    --profile root-ca
+    --not-after=87600h
+    --password-file=/etc/step-ca/password.txt
+    "{{ stepca_root_cn }}"
+    /etc/step-ca/certs/root_ca.crt
+    /etc/step-ca/secrets/root_ca.key
+  register: stepca_cert_output
+  changed_when: "'certificates' in stepca_cert_output.stdout"
+  notify: Save Step-CA certificate output to evidence log
+  when: stepca_enable_generate_root | default(true)

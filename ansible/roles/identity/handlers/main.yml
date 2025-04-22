@@ -1,12 +1,63 @@
 ---
-- name: Restart keycloak
-  ansible.builtin.systemd:
+- name: Reload systemd and start keycloak
+  systemd:
+    daemon_reload: true
     name: keycloak
     state: restarted
     enabled: true
 
-- name: Restart step-ca
-  ansible.builtin.systemd:
-    name: step-ca
-    state: restarted
-    enabled: true
+- name: Record evidence - keycloak service deployment
+  copy:
+    content: |
+      [Evidence] Keycloak systemd unit was deployed and restarted.
+      Timestamp: {{ ansible_date_time.iso8601 }}
+    dest: "{{ evidence_dir }}/01_identity_access/keycloak_service_deploy.log"
+
+- name: Record evidence - step-ca container deployed
+  copy:
+    content: |
+      [Evidence] Step-CA container launched via Podman.
+      Timestamp: {{ ansible_date_time.iso8601 }}
+    dest: "{{ evidence_dir }}/01_identity_access/stepca_container.log"
+
+- name: Record evidence - keycloak realm configured
+  copy:
+    content: |
+      [Evidence] Keycloak realm {{ keycloak_realm }} was successfully configured.
+      Timestamp: {{ ansible_date_time.iso8601 }}
+    dest: "{{ evidence_dir }}/01_identity_access/keycloak_realm_configured.log"
+
+- name: Record evidence - SSO client integration
+  copy:
+    content: |
+      [Evidence] Nextcloud/Gitea SSO integration performed through Keycloak.
+      Timestamp: {{ ansible_date_time.iso8601 }}
+    dest: "{{ evidence_dir }}/01_identity_access/sso_client_integration.log"
+
+- name: Record evidence - MFA flow enabled
+  copy:
+    content: |
+      [Evidence] Multi-factor authentication flow enabled in Keycloak.
+      Timestamp: {{ ansible_date_time.iso8601 }}
+    dest: "{{ evidence_dir }}/01_identity_access/keycloak_mfa_enabled.log"
+
+- name: Save Step-CA certificate output to evidence log
+  copy:
+    content: "{{ stepca_cert_output.stdout }}"
+    dest: "evidence/01_identity_access/stepca_generated_certificates.log"
+    mode: "0644"
+  when: stepca_cert_output is defined
+
+- name: Log issued Step-CA client certificates
+  copy:
+    content: |
+      {% for result in stepca_client_cert_output.results %}
+      CN: {{ result.item.common_name }}
+      Output:
+      {{ result.stdout | default('') }}
+      ---
+      {% endfor %}
+    dest: "evidence/01_identity_access/stepca_client_certificates.log"
+    mode: "0644"
+  when: stepca_client_cert_output is defined
+

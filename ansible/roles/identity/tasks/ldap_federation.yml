@@ -1,0 +1,19 @@
+---
+- name: Configure LDAP Federation
+  when: enable_ldap_federation
+  block:
+    - name: Create LDAP provider
+      ansible.builtin.command: >
+        {{ kcadm_bin }} create user-storage/ldap -r {{ keycloak_realm }}
+        -s name=ldap-users
+        -s providerId=ldap
+        -s enabled=true
+        -s "config.connectionUrl={{ ldap_url }}"
+        -s "config.bindDn={{ ldap_bind_dn }}"
+        -s "config.bindCredential={{ ldap_bind_password }}"
+        -s "config.usersDn={{ ldap_user_search_base }}"
+        -s "config.groupsDn={{ ldap_group_search_base }}"
+        -s "config.editMode=READ_ONLY"
+        -s "config.syncRegistrations=false"
+      environment:
+        PATH: "/opt/keycloak/bin:{{ ansible_env.PATH }}"

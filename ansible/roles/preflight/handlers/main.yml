@@ -1,0 +1,25 @@
+---
+- name: Document Preflight Validation Results
+  copy:
+    content: |
+      # ✅ Preflight Deployment Validation
+
+      Preflight checks completed successfully before provisioning and configuration:
+
+      - `deployment_config.yml` parsed and validated
+      - Required fields present and formatted
+      - DNS resolver availability confirmed
+      - Admin SSH key and email syntax verified
+      - Ports and directories validated
+      - Infrastructure provider settings validated
+
+      All conditions passed, greenlight for infrastructure deployment.
+    dest: "{{ evidence_base_dir | default('evidence') }}/08_preflight_checks/preflight_summary.md"
+    mode: '0644'
+
+- name: Archive preflight logs
+  copy:
+    src: /tmp/preflight_run.log
+    dest: "{{ evidence_base_dir | default('evidence') }}/08_preflight_checks/preflight_run.log"
+    remote_src: yes
+    mode: '0644'

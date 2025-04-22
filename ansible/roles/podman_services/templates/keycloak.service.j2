@@ -1,0 +1,13 @@
+[Unit]
+Description=Podman container for Keycloak (OpenCMMC Identity)
+Wants=network.target
+After=network.target
+
+[Service]
+User={{ svc_keycloak }}
+ExecStart=/usr/bin/podman start -a keycloak
+ExecStop=/usr/bin/podman stop -t 10 keycloak
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

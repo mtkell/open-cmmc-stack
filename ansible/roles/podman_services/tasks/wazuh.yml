@@ -1,38 +1,37 @@
 ---
-- name: Deploy wazuh container with Podman
-  containers.podman.podman_container:
-    name: wazuh
-    image: "{{ wazuh_image }}"
-    state: started
-    restart_policy: always
-    volumes:
-      - "{{ wazuh_data_dir }}:/data:z"
-    env:
-      CONFIG_PATH: "/data/config"
+- name: Ensure Wazuh data directory exists
+  file:
+    path: "{{ wazuh_data_dir | default('/opt/wazuh') }}"
+    state: directory
+    owner: "{{ svc_wazuh }}"
+    group: "{{ svc_wazuh }}"
+    mode: '0755'
 
-- name: Ensure systemd service is enabled for wazuh
-  copy:
+- name: Deploy wazuh.env file
+  template:
+    src: wazuh/.env.j2
+    dest: "{{ wazuh_data_dir }}/.env"
+    owner: "{{ svc_wazuh }}"
+    group: "{{ svc_wazuh }}"
+    mode: '0640'
+
+- name: Deploy Wazuh podman-compose file
+  template:
+    src: wazuh/podman-compose.yml.j2
+    dest: "{{ wazuh_data_dir }}/podman-compose.yml"
+    owner: "{{ svc_wazuh }}"
+    group: "{{ svc_wazuh }}"
+    mode: '0644'
+
+- name: Deploy Wazuh systemd unit
+  template:
+    src: wazuh/wazuh.service.j2
     dest: "/etc/systemd/system/podman-wazuh.service"
-    content: |
-      [Unit]
-      Description=Podman container for wazuh
-      Wants=network.target
-      After=network.target
+    mode: '0644'
 
-      [Service]
-      ExecStart=/usr/bin/podman start -a wazuh
-      ExecStop=/usr/bin/podman stop -t 10 wazuh
-      Restart=always
-
-      [Install]
-      WantedBy=multi-user.target
-    owner: root
-    group: root
-    mode: "0644"
-
-- name: Reload systemd and enable service for wazuh
+- name: Reload systemd and enable wazuh
   systemd:
-    daemon_reload: yes
-    name: podman-wazuh.service
-    enabled: yes
+    daemon_reload: true
+    name: podman-wazuh
+    enabled: true
     state: started

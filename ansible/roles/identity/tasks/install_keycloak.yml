@@ -1,12 +1,23 @@
+# tasks/install_keycloak.yml
 ---
-- name: Install Keycloak container
-  containers.podman.podman_container:
-    name: keycloak
-    image: quay.io/keycloak/keycloak:{{ keycloak_version }}
-    state: started
-    restart_policy: always
-    env:
-      KEYCLOAK_ADMIN: "{{ keycloak_admin_user }}"
-      KEYCLOAK_ADMIN_PASSWORD: "{{ keycloak_admin_password }}"
-    ports:
-      - "8080:8080"
+- name: Create Keycloak data directory
+  file:
+    path: "{{ keycloak_data_dir }}"
+    state: directory
+    owner: "{{ svc_keycloak }}"
+    group: "{{ svc_keycloak }}"
+    mode: '0755'
+
+- name: Render Keycloak podman-compose.yml
+  template:
+    src: keycloak/podman-compose.yml.j2
+    dest: "{{ keycloak_data_dir }}/podman-compose.yml"
+    owner: "{{ svc_keycloak }}"
+    group: "{{ svc_keycloak }}"
+    mode: '0644'
+
+- name: Render Keycloak systemd unit file
+  template:
+    src: keycloak/keycloak.service.j2
+    dest: "/etc/systemd/system/keycloak.service"
+  notify: Reload systemd and start keycloak

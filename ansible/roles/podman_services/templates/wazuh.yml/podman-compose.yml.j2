@@ -1,0 +1,12 @@
+version: '3.8'
+services:
+  wazuh:
+    image: wazuh/wazuh-manager:{{ wazuh_version | default('4.7.3') }}
+    container_name: wazuh-manager
+    restart: always
+    ports:
+      - "{{ wazuh_port }}:55000"
+    volumes:
+      - "{{ wazuh_data_dir }}/data:/var/ossec/data"
+    env_file:
+      - .env

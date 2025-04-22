@@ -1,0 +1,17 @@
+[Unit]
+Description=Podman Container for Wazuh Manager
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+User={{ svc_wazuh }}
+Group={{ svc_wazuh }}
+EnvironmentFile=-/opt/services/wazuh/.env
+ExecStart=/usr/bin/podman-compose -f /opt/services/wazuh/podman-compose.yml up
+ExecStop=/usr/bin/podman-compose -f /opt/services/wazuh/podman-compose.yml down
+Restart=always
+TimeoutStartSec=0
+SyslogIdentifier=wazuh
+
+[Install]
+WantedBy=multi-user.target
