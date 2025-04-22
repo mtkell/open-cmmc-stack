@@ -1,2 +1,62 @@
-do_token         = "your_digitalocean_token_here"
-ssh_fingerprint  = "your_local_ssh_key_fingerprint"
+# Base domain for TLS and reverse proxy
+fqdn_root = "example.com"
+
+# Choose your provider: aws, azure, gcp, digitalocean, proxmox
+infrastructure_provider = "digitalocean"
+
+# Define which services should be deployed, and where
+vm_definitions = {
+  mail = {
+    region = "nyc3"
+    tags   = {
+      role    = "mail"
+      purpose = "email"
+    }
+  }
+
+  files = {
+    region = "nyc3"
+    tags   = {
+      role    = "file_storage"
+      purpose = "nextcloud"
+    }
+  }
+
+  auth = {
+    region = "nyc3"
+    tags   = {
+      role    = "identity"
+      purpose = "keycloak"
+    }
+  }
+}
+
+# infrastructure_provider = "aws"
+# aws_ami         = "ami-0c55b159cbfafe1f0"
+# ssh_key_name    = "my-aws-keypair"
+
+# infrastructure_provider = "azure"
+# azure_resource_group = "my-cmmc-resources"
+# azure_nic_id          = "/subscriptions/.../resourceGroups/.../providers/Microsoft.Network/networkInterfaces/..."
+# ssh_public_key        = "ssh-rsa AAAAB3Nza...your-key-here"
+
+# infrastructure_provider = "gcp"
+# gcp_project_id         = "your-gcp-project-id"
+# gcp_region             = "us-central1"
+# gcp_zone               = "us-central1-a"
+# gcp_credentials_file   = "gcp-service-account.json"
+# ssh_public_key         = "ssh-rsa AAAAB3Nza...your-key-here"
+
+# ⚙️ Proxmox Example (uncomment to use)
+# infrastructure_provider = "proxmox"
+# proxmox_api_url     = "https://192.168.1.100:8006/api2/json"
+# proxmox_user        = "root@pam"
+# proxmox_password    = "yourpassword"
+# proxmox_node        = "pve"
+# proxmox_template    = "ubuntu-22.04-template"
+# ssh_public_key      = "ssh-rsa AAAAB3Nza...your-key-here"
+
+# dns_provider           = "cloudflare"
+# fqdn_root              = "example.com"
+# cloudflare_api_token   = "your-cloudflare-api-token"
+# cloudflare_zone_id     = "your-cloudflare-zone-id"

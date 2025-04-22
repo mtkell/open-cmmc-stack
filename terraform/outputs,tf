@@ -1,0 +1,24 @@
+# Output all service names
+output "vm_services" {
+  value       = keys(module.vm)
+  description = "List of deployed service names"
+}
+
+# Output tags per service
+output "vm_tags" {
+  value = {
+    for service, mod in module.vm : service => mod.vm_service_tag
+  }
+  description = "Tags assigned per service VM"
+}
+
+# Placeholder for service-level info until actual providers are implemented
+output "vm_placeholders" {
+  value = {
+    for service, mod in module.vm : service => {
+      service_tag = mod.vm_service_tag
+      ip_address  = "PLACEHOLDER"
+    }
+  }
+  description = "Service-level IPs and tags (will be replaced with real outputs later)"
+}

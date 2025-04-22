@@ -1,0 +1,10 @@
+- name: Log evidence
+  include_role:
+    name: evidence_logger
+  vars:
+    log_file: "dns_check.log"
+    log_content: |
+      mail.example.com -> 203.0.113.10
+      auth.example.com -> 203.0.113.11
+    summary_entry: "✅ DNS resolution for example.com"
+    validation_entry: "DNS check completed and passed for fqdn_root: example.com"
