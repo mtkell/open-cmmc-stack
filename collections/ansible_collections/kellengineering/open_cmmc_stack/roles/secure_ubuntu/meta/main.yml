@@ -1,0 +1,12 @@
+---
+galaxy_info:
+  role_name: secure_ubuntu
+  author: Mike Kell
+  description: Hardens Ubuntu to meet CMMC Level 2 minimums
+  license: MIT
+  min_ansible_version: "2.12"
+  platforms:
+    - name: Ubuntu
+      versions:
+        - 20.04
+        - 22.04

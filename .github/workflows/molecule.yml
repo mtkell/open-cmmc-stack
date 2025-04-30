@@ -1,0 +1,35 @@
+name: Molecule CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  molecule:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        role:
+          - secure_ubuntu
+          - podman_services
+          - identity
+          - file_storage
+          - monitoring
+          - preflight
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.12
+      - name: Install Ansible and Molecule
+        run: |
+          pip install ansible molecule molecule-plugins[docker] docker
+      - name: Test Molecule Scenario
+        run: |
+          cd collections/ansible_collections/kellengineering/open_cmmc_stack/roles/${{ matrix.role }}
+          molecule test

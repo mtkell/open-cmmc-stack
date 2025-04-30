@@ -1,0 +1,11 @@
+namespace: kellengineering
+name: open_cmmc_stack
+version: 1.0.0
+readme: README.md
+authors:
+  - Mike Kell
+description: Collection for OpenCMMC Stack
+license: MIT
+repository: https://github.com/mtkell/open-cmmc-stack
+
+build_ignore: []

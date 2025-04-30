@@ -1,9 +1,0 @@
----
-galaxy_info:
-  role_name: secure_ubuntu
-  author: open-cmmc
-  description: Harden Ubuntu system for CMMC Level 2
-  license: MIT
-  min_ansible_version: "2.10"
-
-dependencies: []
